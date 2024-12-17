@@ -52,6 +52,7 @@ class TaskController extends Controller
      */
     public function edit(string $id)
     {
+        $task = Task::find($id);
         return view('tasks.edit', compact('task'));
     }
 
@@ -60,7 +61,19 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ],[
+            'title.required' => 'Tiêu đề không được để trống!',
+            'description.required' => 'Mô tả không được để trống!',
+        ]);
+
+        $task = Task::find($id);
+        $data = $request->all();
+        $data['completed'] = $request->has('completed') ? 1 : 0;
+        $task->update($data);
+        return redirect()->route('tasks.index')->with('success', 'Cập nhật thành công!');
     }
 
     /**
