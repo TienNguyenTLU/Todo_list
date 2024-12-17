@@ -12,8 +12,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        
+        $tasks = Task::orderBy('created_at', 'desc');
         $tasks = Task::all();
+        $tasks = Task::paginate(5);
         return view('tasks.index', compact('tasks'));
     }   
 
@@ -25,12 +26,17 @@ class TaskController extends Controller
         return view('tasks.add');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            ''
+        ]);
+
+        Task::create($request->all());
+        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
     /**
